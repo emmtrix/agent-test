@@ -13,6 +13,11 @@ This repository isolates one question:
 It also contains a normal Actions workflow using the same container so regular
 Actions logs can be compared against Copilot session logs.
 
+## Investigation Notes
+
+Detailed background, observed behavior, tested hypotheses, and next steps are
+captured in [docs/copilot-container-log-investigation.md](docs/copilot-container-log-investigation.md).
+
 ## Included Workflows
 
 - `.github/workflows/copilot-setup-steps.yml`
@@ -28,3 +33,15 @@ Actions logs can be compared against Copilot session logs.
    `notes.txt`.
 3. Check whether the Copilot session UI shows live output.
 4. Compare that with the normal Actions run logs from `container-smoke.yml`.
+
+## Current Minimal Test Shape
+
+- official GitHub-hosted runner: `ubuntu-latest`
+- explicit Ubuntu 24.04 container image:
+  `mcr.microsoft.com/devcontainers/base:ubuntu-24.04`
+- no extra `container.options`
+- no custom `HOME`
+- no extra user/capability/mount overrides
+
+This keeps the repro intentionally close to the smallest possible
+container-enabled Copilot setup.
