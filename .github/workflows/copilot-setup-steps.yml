@@ -1,0 +1,33 @@
+name: "Copilot Setup Steps"
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  # The job must be called copilot-setup-steps for Copilot to detect it.
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/devcontainers/base:ubuntu-24.04
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Show container environment
+        run: |
+          echo "hello from copilot-setup-steps"
+          echo "runner=$(uname -a)"
+          echo "user=$(id)"
+          echo "pwd=$(pwd)"
+          echo "workspace=$GITHUB_WORKSPACE"
+          ls -la

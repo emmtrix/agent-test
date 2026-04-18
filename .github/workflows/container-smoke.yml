@@ -1,0 +1,30 @@
+name: Container Smoke
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+      - main
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/devcontainers/base:ubuntu-24.04
+
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Emit normal Actions logs
+        run: |
+          echo "hello from container-smoke"
+          echo "runner=$(uname -a)"
+          echo "user=$(id)"
+          echo "pwd=$(pwd)"
+          echo "workspace=$GITHUB_WORKSPACE"
+          ls -la
