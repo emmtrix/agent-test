@@ -6,15 +6,23 @@ on:
     branches:
       - master
       - main
+    paths:
+      - .github/workflows/container-smoke.yml
+      - docker/build-test-container/**
+      - .github/workflows/ghcr-build-test-container.yml
 
 jobs:
   smoke:
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/devcontainers/base:ubuntu-24.04
+      image: ghcr.io/emmtrix/agent-test-build-test:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
 
     permissions:
       contents: read
+      packages: read
 
     steps:
       - name: Checkout code

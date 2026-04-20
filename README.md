@@ -1,7 +1,8 @@
 # agent-test
 
-Minimal public repro repository for GitHub Copilot cloud agent behavior with
-job containers on official GitHub-hosted runners.
+Repro repository for GitHub Copilot cloud agent behavior with job containers.
+The repo now also carries its own build/test container definition so the setup
+is not hidden behind another repository's GHCR image.
 
 ## Purpose
 
@@ -10,8 +11,11 @@ This repository isolates one question:
 - Does a Copilot cloud agent session show live session output when
   `.github/workflows/copilot-setup-steps.yml` uses a real job `container:`?
 
-It also contains a normal Actions workflow using the same container so regular
-Actions logs can be compared against Copilot session logs.
+It also contains:
+
+- a repo-local GHCR build workflow for the container image used by the repro
+- a normal Actions workflow using the same container so regular Actions logs
+  can be compared against Copilot session logs
 
 ## Investigation Notes
 
@@ -20,9 +24,12 @@ captured in [docs/copilot-container-log-investigation.md](docs/copilot-container
 
 ## Included Workflows
 
+- `.github/workflows/ghcr-build-test-container.yml`
+  Builds and optionally pushes `ghcr.io/emmtrix/agent-test-build-test` from
+  `docker/build-test-container/`.
 - `.github/workflows/copilot-setup-steps.yml`
-  Minimal Copilot setup workflow with `runs-on: ubuntu-latest` and
-  `container: mcr.microsoft.com/devcontainers/base:ubuntu-24.04`.
+  Copilot setup workflow using
+  `container: ghcr.io/emmtrix/agent-test-build-test:latest`.
 - `.github/workflows/container-smoke.yml`
   Normal Actions workflow using the same runner and container.
 
@@ -34,14 +41,12 @@ captured in [docs/copilot-container-log-investigation.md](docs/copilot-container
 3. Check whether the Copilot session UI shows live output.
 4. Compare that with the normal Actions run logs from `container-smoke.yml`.
 
-## Current Minimal Test Shape
+## Current Container Setup
 
-- official GitHub-hosted runner: `ubuntu-latest`
-- explicit Ubuntu 24.04 container image:
-  `mcr.microsoft.com/devcontainers/base:ubuntu-24.04`
-- no extra `container.options`
-- no custom `HOME`
-- no extra user/capability/mount overrides
+- build definition lives in `docker/build-test-container/`
+- GHCR image name: `ghcr.io/emmtrix/agent-test-build-test`
+- Copilot workflow currently uses a Blacksmith runner plus the repo-owned image
+- normal Actions smoke test uses `ubuntu-latest` plus the same repo-owned image
 
-This keeps the repro intentionally close to the smallest possible
-container-enabled Copilot setup.
+This keeps the image definition inside the repro so container changes can be
+tracked and rebuilt from this repository alone.

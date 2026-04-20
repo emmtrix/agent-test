@@ -5,9 +5,13 @@ on:
   push:
     paths:
       - .github/workflows/copilot-setup-steps.yml
+      - docker/build-test-container/**
+      - .github/workflows/ghcr-build-test-container.yml
   pull_request:
     paths:
       - .github/workflows/copilot-setup-steps.yml
+      - docker/build-test-container/**
+      - .github/workflows/ghcr-build-test-container.yml
 
 jobs:
   # The job must be called copilot-setup-steps for Copilot to detect it.
@@ -17,7 +21,7 @@ jobs:
       run:
         shell: bash
     container:
-      image: ghcr.io/emmtrix/llvm-cpp2c-build-test:latest
+      image: ghcr.io/emmtrix/agent-test-build-test:latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}

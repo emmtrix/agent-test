@@ -3,6 +3,18 @@
 This document records the current understanding behind this reproduction
 repository.
 
+## Current Repo Layout
+
+This repro now includes a local copy of the build/test container definition
+originally developed in `llvm-cpp2c`:
+
+- `docker/build-test-container/Dockerfile`
+- `docker/build-test-container/select-ubuntu-mirror.sh`
+- `.github/workflows/ghcr-build-test-container.yml`
+
+That makes the image provenance explicit inside this repo and allows changes to
+the workflow container and the image build recipe to be tracked together.
+
 ## Goal
 
 Determine whether GitHub Copilot cloud agent sessions lose visible session
@@ -26,15 +38,15 @@ That larger setup had additional moving parts:
 This repo strips the scenario down to the smallest practical version so the
 question can be tested in isolation on official GitHub-hosted infrastructure.
 
-## Minimal Repro Shape
+## Current Repro Shape
 
 Current workflow choices:
 
-- `runs-on: ubuntu-latest`
-- `container.image: mcr.microsoft.com/devcontainers/base:ubuntu-24.04`
-- no extra `container.options`
-- no custom environment overrides
-- one setup step that prints simple diagnostics
+- Copilot workflow uses `runs-on: blacksmith-4vcpu-ubuntu-2404`
+- Copilot workflow uses `container.image: ghcr.io/emmtrix/agent-test-build-test:latest`
+- image build recipe lives in this repo under `docker/build-test-container/`
+- image publishing workflow lives in `.github/workflows/ghcr-build-test-container.yml`
+- normal comparison workflow still runs on `ubuntu-latest`
 
 The normal comparison workflow `container-smoke.yml` uses the same runner and
 container so standard Actions logging can be compared against Copilot session
@@ -161,17 +173,14 @@ Several of those workflows use simple off-the-shelf images or very light custom
 images. That weakens the hypothesis that a special package, entrypoint, or
 runner bootstrap inside the Dockerfile is required for Copilot session logs.
 
-## Why This Repo Uses An Explicit Ubuntu 24.04 Image
+## Why The Container Build Files Live Here Now
 
-This repo intentionally uses:
+This repo now keeps the container build recipe locally so:
 
-- `mcr.microsoft.com/devcontainers/base:ubuntu-24.04`
-
-instead of a generic `ubuntu` tag so the test is pinned to a concrete Ubuntu
-24.x base.
-
-This keeps the reproduction closer to current GitHub-hosted Ubuntu behavior
-without introducing a custom image build.
+- the workflow no longer depends on an opaque image owned by another repo
+- image changes and Copilot workflow changes can be reviewed together
+- GHCR pull failures can be separated from Dockerfile/build-definition changes
+- the reproduction can be rebuilt from this repo alone
 
 ## Current Working Theory
 
@@ -229,10 +238,9 @@ The key principle is to vary one axis at a time:
 
 If Copilot session logs are missing here too, despite:
 
-- official runner
-- tiny workflow
-- simple public image
-- no extra container options
+- a container image definition that is versioned in the same repo
+- normal Actions runs succeeding with the same image
+- setup steps reaching completion inside the container
 
 then the evidence against "your custom repo setup is the cause" becomes much
 stronger.
