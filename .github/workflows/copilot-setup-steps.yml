@@ -17,12 +17,21 @@ jobs:
       run:
         shell: bash
     container:
-      image: mcr.microsoft.com/devcontainers/base:ubuntu-24.04
-      volumes:
-        - ${{ github.workspace }}:${{ github.workspace }}
-      options: --device=/dev/mem --device=/dev/dri --group-add video --group-add 991 --security-opt seccomp=unconfined --cap-add=SYS_PTRACE --shm-size=8g
-              -e ZE_AFFINITY_MASK
-              --user 0:0
+      image: ghcr.io/emmtrix/llvm-cpp2c-build-test:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+      # Copilot's helper scripts still resolve through host-style
+      # /home/runner/_work/_temp/... paths even when a job container is active.
+      # Keep the bind mount narrow so the container does not shadow the rest of
+      # /home/runner while we test whether session-log streaming returns.
+      options: --volume /home/runner/_work:/home/runner/_work
+
+    # Set minimal permissions for setup steps.
+    # Copilot Agent receives its own token with appropriate permissions.
+    permissions:
+      contents: read
+      packages: read
               
     permissions:
       contents: read
