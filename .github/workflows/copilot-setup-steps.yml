@@ -32,11 +32,31 @@ jobs:
     permissions:
       contents: read
       packages: read
-              
-    permissions:
-      contents: read
 
     steps:
+      - name: Install system dependencies
+        run: |
+          if [ -n "${{ job.container.id }}" ]; then
+            echo "Job container is active; skipping host dependency install."
+            exit 0
+          fi
+
+          sudo apt-get update
+          sudo apt-get install -y \
+            ccache \
+            cmake \
+            ninja-build \
+            lld \
+            python3 \
+            libboost-date-time-dev \
+            libboost-filesystem-dev \
+            libboost-program-options-dev \
+            libboost-system-dev \
+            libboost-test-dev \
+            valgrind \
+            php-cli \
+            libxml2-utils
+
       - name: Checkout code
         uses: actions/checkout@v4
 
