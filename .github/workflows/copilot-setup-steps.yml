@@ -17,7 +17,7 @@ jobs:
       run:
         shell: bash
     container:
-      image: mcr.microsoft.com/devcontainers/base:ubuntu-24.04
+      image: ghcr.io/emmtrix/llvm-cpp2c-build-test:latest
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
