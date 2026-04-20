@@ -45,8 +45,8 @@ captured in [docs/copilot-container-log-investigation.md](docs/copilot-container
 
 - build definition lives in `docker/build-test-container/`
 - GHCR image name: `ghcr.io/emmtrix/agent-test-build-test`
-- Copilot workflow currently uses a Blacksmith runner plus the repo-owned image
-- normal Actions smoke test uses `ubuntu-latest` plus the same repo-owned image
+- Copilot workflow uses `ubuntu-latest` plus the repo-owned image
+- normal Actions smoke test also uses `ubuntu-latest` plus the same repo-owned image
 
 This keeps the image definition inside the repro so container changes can be
 tracked and rebuilt from this repository alone.

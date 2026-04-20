@@ -42,7 +42,7 @@ question can be tested in isolation on official GitHub-hosted infrastructure.
 
 Current workflow choices:
 
-- Copilot workflow uses `runs-on: blacksmith-4vcpu-ubuntu-2404`
+- Copilot workflow uses `runs-on: ubuntu-latest`
 - Copilot workflow uses `container.image: ghcr.io/emmtrix/agent-test-build-test:latest`
 - image build recipe lives in this repo under `docker/build-test-container/`
 - image publishing workflow lives in `.github/workflows/ghcr-build-test-container.yml`
